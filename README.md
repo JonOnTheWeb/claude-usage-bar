@@ -7,7 +7,8 @@ or running `/usage` in Claude Code and auto-refreshes.
 <img src="docs/screenshot.png" width="381" alt="Menu bar item showing S 4% · W 2%, with the menu open listing session and weekly usage and reset countdowns">
 
 The menu bar item shows a starburst, then the session (5-hour window) and
-weekly percentages. Click it for the reset countdowns, a manual refresh, a
+weekly percentages. On plans without a session limit it shows only the
+weekly figure. Click it for the reset countdowns, a manual refresh, a
 Launch at Login toggle, and Quit. If the item is greyed out, the last poll
 failed and the menu says why.
 

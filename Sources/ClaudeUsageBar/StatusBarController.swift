@@ -139,18 +139,28 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     /// notch Macs do silently, and the menu already shows the error.
     private func render() {
         if let snapshot {
-            statusItem.button?.title =
-                "S \(percentText(snapshot.session?.percent)) · W \(percentText(snapshot.weekly?.percent))"
+            statusItem.button?.title = title(for: snapshot)
         } else if lastError != nil {
             statusItem.button?.title = "⚠️"
         }
         statusItem.button?.appearsDisabled = lastError != nil
 
         sessionItem.title = detailLine("Session", snapshot?.session)
+        // Only hide once a snapshot confirms there's no session limit;
+        // before the first fetch both rows show "–".
+        sessionItem.isHidden = snapshot != nil && snapshot?.session == nil
         weeklyItem.title = detailLine("Weekly", snapshot?.weekly)
         errorItem.title = lastError.map { "⚠️ \($0.localizedDescription)" } ?? ""
         errorItem.isHidden = lastError == nil
         launchAtLoginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
+    }
+
+    /// Some plans have no session limit, and the API leaves it out of
+    /// `limits` entirely, so drop the S figure rather than show "S ?".
+    private func title(for snapshot: UsageSnapshot) -> String {
+        let weekly = "W \(percentText(snapshot.weekly?.percent))"
+        guard let session = snapshot.session else { return weekly }
+        return "S \(percentText(session.percent)) · \(weekly)"
     }
 
     private func detailLine(_ label: String, _ limit: UsageSnapshot.Limit?) -> String {
